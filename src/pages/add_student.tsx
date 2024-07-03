@@ -1,66 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
-import axios from "axios";
-
-interface Country {
-  name: string;
-}
-
-interface State {
-  name: string;
-}
+import useLocationData from "../hooks/useLocationData";
 
 const AddStudent = () => {
   const [validated, setValidated] = useState(false);
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [states, setStates] = useState<State[]>([]);
-  const [cities, setCities] = useState<string[]>([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
-
-  useEffect(() => {
-    // Fetch countries
-    axios
-      .get("https://countriesnow.space/api/v0.1/countries/positions")
-      .then((response) => {
-        setCountries(response.data.data);
-      });
-  }, []);
+  const {
+    countries,
+    states,
+    fetchStates,
+    cities,
+    fetchCities,
+    selectedCountry,
+    setSelectedCountry,
+    selectedState,
+    setSelectedState,
+    selectedCity,
+    setSelectedCity,
+  } = useLocationData();
 
   // handle for country change
   const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const country = event.target.value;
     setSelectedCountry(country);
+    fetchStates(country);
     console.log(country);
-
-    // Fetch states for the selected Countries
-    axios
-      .post("https://countriesnow.space/api/v0.1/countries/states", { country })
-      .then((respose) => {
-        setStates(respose.data.data.states);
-        console.log(respose.data.data);
-      })
-      .catch((error) => console.error("Error Fetching State", error));
   };
 
   // handle for state change
   const handleStateChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const state = event.target.value;
     setSelectedState(state);
+    fetchCities(selectedCountry, state);
     console.log(state);
-
-    // fetch cities for selected state
-    axios
-      .post("https://countriesnow.space/api/v0.1/countries/state/cities", {
-        country: selectedCountry,
-        state,
-      })
-      .then((response) => {
-        setCities(response.data.data);
-        console.log(response.data.data);
-      })
-      .catch((error) => console.error(error));
   };
 
   const handelCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
