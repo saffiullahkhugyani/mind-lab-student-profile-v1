@@ -17,13 +17,32 @@ const AddStudent = () => {
     selectedCity,
     setSelectedCity,
   } = useLocationData();
+  const [formData, setFormData] = useState({
+    arabicFirstName: "",
+    arabicLastName: "",
+    englishFirstName: "",
+    englishLaseName: "",
+    dateOfBirth: "",
+    fatherName: "",
+    email: "",
+    contact: "",
+    streetAddress: "",
+  });
+
+  // handle input change
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = event.target as HTMLInputElement;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
 
   // handle for country change
   const handleCountryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const country = event.target.value;
     setSelectedCountry(country);
     fetchStates(country);
-    console.log(country);
   };
 
   // handle for state change
@@ -31,7 +50,6 @@ const AddStudent = () => {
     const state = event.target.value;
     setSelectedState(state);
     fetchCities(selectedCountry, state);
-    console.log(state);
   };
 
   const handelCityChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -44,6 +62,14 @@ const AddStudent = () => {
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+    } else {
+      event.preventDefault();
+      console.log({
+        ...formData,
+        country: selectedCountry,
+        state: selectedState,
+        city: selectedCity,
+      });
     }
 
     setValidated(true);
@@ -65,12 +91,13 @@ const AddStudent = () => {
         <h3 className="mb-3 text-center">Add Student</h3>
         <Row>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formArabicFirstName">
+            <Form.Group className="mb-3" controlId="arabicFirstName">
               <Form.Label>First Name (Arabic)</Form.Label>
               <Form.Control
                 required
                 type="text"
                 placeholder="Enter First Name"
+                onChange={handleInputChange}
                 onFocus={handleArabicFocus}
                 onBlur={handleArabicBlur}
               />
@@ -80,12 +107,13 @@ const AddStudent = () => {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formArabicLastName">
+            <Form.Group className="mb-3" controlId="arabicLastName">
               <Form.Label>Last Name (Arabic)</Form.Label>
               <Form.Control
                 required
                 type="text"
                 placeholder="Enter Arabic Last Name"
+                onChange={handleInputChange}
                 onFocus={handleArabicFocus}
                 onBlur={handleArabicBlur}
               />
@@ -97,12 +125,13 @@ const AddStudent = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formFirstName">
+            <Form.Group className="mb-3" controlId="englishFirstName">
               <Form.Label>First Name (English)</Form.Label>
               <Form.Control
                 required
                 type="text"
                 placeholder="Enter First Name"
+                onChange={handleInputChange}
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid first name.
@@ -110,12 +139,13 @@ const AddStudent = () => {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formLastName">
+            <Form.Group className="mb-3" controlId="englishLastName">
               <Form.Label>Last Name (English)</Form.Label>
               <Form.Control
                 required
                 type="text"
                 placeholder="Enter Last Name"
+                onChange={handleInputChange}
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid last name.
@@ -125,9 +155,9 @@ const AddStudent = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formDateOfBirth">
+            <Form.Group className="mb-3" controlId="dateOfBirth">
               <Form.Label>Date of Birth</Form.Label>
-              <Form.Control required type="date" />
+              <Form.Control required type="date" onChange={handleInputChange} />
               <Form.Control.Feedback>Looks good</Form.Control.Feedback>
               <Form.Control.Feedback type="invalid">
                 Please provide a valid date of birth.
@@ -135,12 +165,13 @@ const AddStudent = () => {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formNumber">
+            <Form.Group className="mb-3" controlId="fatherName">
               <Form.Label>Father Name</Form.Label>
               <Form.Control
                 required
                 type="text"
                 placeholder="Enter Father Name"
+                onChange={handleInputChange}
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid number.
@@ -148,23 +179,33 @@ const AddStudent = () => {
             </Form.Group>
           </Col>
         </Row>
-        <Form.Group className="mb-3" controlId="formEmail">
+        <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>
-          <Form.Control required type="email" placeholder="Enter Email" />
+          <Form.Control
+            required
+            type="email"
+            placeholder="Enter Email"
+            onChange={handleInputChange}
+          />
           <Form.Control.Feedback type="invalid">
             Please provide a valid email.
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group className="mb-3" controlId="formContact">
+        <Form.Group className="mb-3" controlId="contact">
           <Form.Label>Contact</Form.Label>
-          <Form.Control required type="number" placeholder="Enter Contact" />
+          <Form.Control
+            required
+            type="number"
+            placeholder="Enter Contact"
+            onChange={handleInputChange}
+          />
           <Form.Control.Feedback type="invalid">
             Please provide a valid contact.
           </Form.Control.Feedback>
         </Form.Group>
         <Row>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formCountry">
+            <Form.Group className="mb-3" controlId="country">
               <Form.Label>Country</Form.Label>
               <Form.Select
                 required
@@ -185,7 +226,7 @@ const AddStudent = () => {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formCity">
+            <Form.Group className="mb-3" controlId="state">
               <Form.Label>State</Form.Label>
               <Form.Select
                 required
@@ -209,7 +250,7 @@ const AddStudent = () => {
         </Row>
         <Row>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formNeighborhood">
+            <Form.Group className="mb-3" controlId="city">
               <Form.Label>City</Form.Label>
               <Form.Select
                 required
@@ -231,12 +272,13 @@ const AddStudent = () => {
             </Form.Group>
           </Col>
           <Col md={6}>
-            <Form.Group className="mb-3" controlId="formArea">
+            <Form.Group className="mb-3" controlId="streetAddress">
               <Form.Label>Street Address</Form.Label>
               <Form.Control
                 required
                 type="text"
                 placeholder="Enter Street Address"
+                onChange={handleInputChange}
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid area.
