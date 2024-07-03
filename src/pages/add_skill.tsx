@@ -44,6 +44,16 @@ const AddSkill = () => {
     setValidated(true);
   };
 
+  const handleArabicFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.target.setAttribute("dir", "rtl");
+    event.target.setAttribute("lang", "ar");
+  };
+
+  const handleArabicBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    event.target.removeAttribute("dir");
+    event.target.removeAttribute("lang");
+  };
+
   return (
     <div className="m-auto w-75 p-3">
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -78,6 +88,8 @@ const AddSkill = () => {
             type="text"
             placeholder="Skill name "
             onChange={handleInputChange}
+            onBlur={handleArabicBlur}
+            onFocus={handleArabicFocus}
           />
           <Form.Control.Feedback type="invalid">
             Please enter skill name (Arabic)
