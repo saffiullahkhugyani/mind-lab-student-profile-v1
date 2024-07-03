@@ -3,6 +3,7 @@ import { Avatar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import EditCertificateModal from "../components/edit_certificate_modal";
 import noUserImage from "../assets/no-profile-picture-icon.png";
+import CustomPieChart from "../components/pie_chart";
 
 interface CertificateModel {
   issueAuthority: string;
@@ -13,6 +14,12 @@ interface CertificateModel {
   skill: string;
   skillLevel: string;
 }
+
+const data = [
+  { id: 0, value: 10, label: "series A" },
+  { id: 1, value: 15, label: "series B" },
+  { id: 2, value: 20, label: "series C" },
+];
 
 const StudentProfile = () => {
   const [showModal, setShowModal] = useState(false);
@@ -40,14 +47,14 @@ const StudentProfile = () => {
 
   return (
     <Container className="border p-3 my-3">
-      <Row className="mb-3">
+      <Row className="mb-3 m-auto">
         <Col>
           <Typography variant="h5" component="div" className="text-center">
             Student Profile
           </Typography>
         </Col>
       </Row>
-      <Row>
+      <Row className="m-auto">
         <Col
           md={4}
           className="d-flex justify-content-center align-items-center border p-2"
@@ -109,25 +116,25 @@ const StudentProfile = () => {
           </Row>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-3 m-auto">
         <Col className="d-flex justify-content-between border p-2">
           <Typography variant="body1">Date. Of. Birth</Typography>
           <Typography variant="body1">12-1-65</Typography>
         </Col>
       </Row>
-      <Row>
+      <Row className="m-auto">
         <Col className="d-flex justify-content-between border p-2">
           <Typography variant="body1">Email</Typography>
           <Typography variant="body1">kajoor77766@gmail.com</Typography>
         </Col>
       </Row>
-      <Row>
+      <Row className="m-auto">
         <Col className="d-flex justify-content-between border p-2">
           <Typography variant="body1">Contact</Typography>
           <Typography variant="body1">97155107766</Typography>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-3 m-auto">
         <Col className="border p-2">
           <Typography variant="body2" className="fw-bold">
             Address
@@ -150,14 +157,20 @@ const StudentProfile = () => {
           </Row>
         </Col>
       </Row>
-      <Row className="mt-3 ">
+      <Row className="border mt-3 m-auto">
+        <Col className="d-lg-flex justify-content-center">
+          <CustomPieChart data={data} />
+          <CustomPieChart data={data} />
+        </Col>
+      </Row>
+      <Row className=" border mt-3 p-3 m-auto">
         <Col className="d-flex justify-content-center">
           <Button variant="outline-success" onClick={handleShowModal}>
             Add Certificate
           </Button>
         </Col>
       </Row>
-      <Row className="mt-3">
+      <Row className="mt-3 m-auto">
         <Col className="border p-2">
           <Table striped bordered hover>
             <thead>

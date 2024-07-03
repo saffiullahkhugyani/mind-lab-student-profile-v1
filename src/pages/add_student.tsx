@@ -21,7 +21,7 @@ const AddStudent = () => {
     arabicFirstName: "",
     arabicLastName: "",
     englishFirstName: "",
-    englishLaseName: "",
+    englishLastName: "",
     dateOfBirth: "",
     fatherName: "",
     email: "",
@@ -210,7 +210,6 @@ const AddStudent = () => {
               <Form.Select
                 required
                 as={"select"}
-                value={selectedCountry}
                 onChange={handleCountryChange}
                 defaultValue=""
               >
@@ -235,7 +234,6 @@ const AddStudent = () => {
                 required
                 as={"select"}
                 aria-label="Default Select"
-                value={selectedState}
                 onChange={handleStateChange}
                 defaultValue=""
               >
@@ -261,7 +259,6 @@ const AddStudent = () => {
               <Form.Select
                 required
                 aria-label="Default value"
-                value={selectedCity}
                 onChange={handelCityChange}
                 defaultValue=""
               >
