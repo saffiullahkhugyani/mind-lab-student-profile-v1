@@ -1,7 +1,43 @@
 import { Container, Row, Col, Table, Button } from "react-bootstrap";
 import { Avatar, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import EditCertificateModal from "../components/edit_certificate_modal";
+import noUserImage from "../assets/no-profile-picture-icon.png";
+
+interface CertificateModel {
+  issueAuthority: string;
+  issueYear: string;
+  numberOfHours: string;
+  dateAdded: string;
+  skillCategory: string;
+  skill: string;
+  skillLevel: string;
+}
 
 const StudentProfile = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [certificateData, setCertificateData] = useState<CertificateModel[]>(
+    []
+  );
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleShowModal = () => {
+    setShowModal(true);
+  };
+
+  const handleSaveChanges = (data: any) => {
+    setCertificateData((prevData) => [...prevData, data]);
+
+    handleCloseModal();
+  };
+
+  useEffect(() => {
+    console.log("This is certificate Data: ", certificateData);
+  }, [certificateData]);
+
   return (
     <Container className="border p-3 my-3">
       <Row className="mb-3">
@@ -18,7 +54,7 @@ const StudentProfile = () => {
         >
           <Avatar
             alt="Student Photo"
-            src="https://via.placeholder.com/150"
+            src={noUserImage}
             sx={{ width: 150, height: 150 }}
           />
         </Col>
@@ -97,21 +133,28 @@ const StudentProfile = () => {
             Address
           </Typography>
           <Row className="d-flex justify-content-between border-top pt-2">
-            <Col>Neighborhood</Col>
+            <Col>Street Address</Col>
             <Col className="text-end">Muuhasisha</Col>
           </Row>
           <Row className="d-flex justify-content-between border-top pt-2">
-            <Col>Area</Col>
+            <Col>City</Col>
             <Col className="text-end">Diera</Col>
           </Row>
           <Row className="d-flex justify-content-between border-top pt-2">
-            <Col>City</Col>
+            <Col>State</Col>
             <Col className="text-end">Dubai</Col>
           </Row>
           <Row className="d-flex justify-content-between border-top pt-2">
             <Col>Country</Col>
             <Col className="text-end">United Arab Emirates</Col>
           </Row>
+        </Col>
+      </Row>
+      <Row className="mt-3 ">
+        <Col className="d-flex justify-content-center">
+          <Button variant="outline-success" onClick={handleShowModal}>
+            Add Certificate
+          </Button>
         </Col>
       </Row>
       <Row className="mt-3">
@@ -127,27 +170,24 @@ const StudentProfile = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1231412</td>
-                <td>12-12-23</td>
-                <td>نهاية الطباعة</td>
-                <td>3d printing</td>
-                <td>Completed</td>
-                <td className="d-flex justify-content-center align-items-center">
-                  <Button variant="outline-primary">Update</Button>
-                </td>
-              </tr>
-              <tr>
-                <td>44212</td>
-                <td>11-1-23</td>
-                <td>بايثون</td>
-                <td>Pyathoo</td>
-                <td>In progress</td>
-              </tr>
+              {certificateData.map((certificate) => (
+                <tr>
+                  <td>{certificate.dateAdded}</td>
+                  <td>{certificate.issueAuthority}</td>
+                  <td>{certificate.skill}</td>
+                  <td>{certificate.skillCategory}</td>
+                  <td>{certificate.skillLevel}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </Col>
       </Row>
+      <EditCertificateModal
+        show={showModal}
+        onHide={handleCloseModal}
+        onSave={handleSaveChanges}
+      />
     </Container>
   );
 };

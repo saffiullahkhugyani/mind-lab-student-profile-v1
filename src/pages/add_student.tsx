@@ -212,8 +212,11 @@ const AddStudent = () => {
                 as={"select"}
                 value={selectedCountry}
                 onChange={handleCountryChange}
+                defaultValue=""
               >
-                <option>Select a Country</option>
+                <option value="" disabled>
+                  Select a Country
+                </option>
                 {countries.map((country) => (
                   <option key={country.name} value={country.name}>
                     {country.name}
@@ -234,8 +237,11 @@ const AddStudent = () => {
                 aria-label="Default Select"
                 value={selectedState}
                 onChange={handleStateChange}
+                defaultValue=""
               >
-                <option>Select a State</option>
+                <option value="" disabled>
+                  Select a State
+                </option>
                 {states.map((state) => (
                   <option key={state.name} value={state.name}>
                     {state.name}
@@ -257,8 +263,11 @@ const AddStudent = () => {
                 aria-label="Default value"
                 value={selectedCity}
                 onChange={handelCityChange}
+                defaultValue=""
               >
-                <option>Select a city</option>
+                <option value="" disabled>
+                  Select a city
+                </option>
                 {cities &&
                   cities.map((city, index) => (
                     <option key={index} value={city}>
