@@ -18,6 +18,7 @@ interface StudentRecord {
   state: string;
   city: string;
   street_address: string;
+  image_url: string;
 }
 
 function HomePage() {
@@ -50,16 +51,13 @@ function HomePage() {
     getStudentProfiles();
   }, []);
 
-  useEffect(() => {
-    console.log("This is list of student record data: ", studentRecord);
-  }, [studentRecord]);
+  useEffect(() => {}, [studentRecord]);
 
   const handleStudentChange = (event: React.FormEvent<HTMLSelectElement>) => {
     const studentId = event.currentTarget.value;
     const studentData = studentRecord.find(
       (student) => student.id === studentId
     );
-    console.log("Found student:", studentData);
     console.log(studentId);
     setSelectedStudent(studentData);
   };

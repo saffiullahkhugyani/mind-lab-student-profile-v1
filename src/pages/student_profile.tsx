@@ -2,7 +2,6 @@ import { Container, Row, Col, Table, Button } from "react-bootstrap";
 import { Avatar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import EditCertificateModal from "../components/edit_certificate_modal";
-import noUserImage from "../assets/no-profile-picture-icon.png";
 import CustomPieChart from "../components/pie_chart";
 import { supabase } from "../services/supabase_client";
 import BackDrop from "../components/back_drop";
@@ -23,6 +22,7 @@ interface StudentRecord {
   state: string;
   city: string;
   street_address: string;
+  image_url: string;
 }
 
 // Props for student interface
@@ -104,7 +104,6 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
   // this will be used for inserting certificates into database
   const handleSaveChanges = (data: CertificateModel) => {
     setCertificateData((prevData) => [...prevData, data]);
-    console.log("data from Modal", data);
 
     insertCertificateData(data);
   };
@@ -164,9 +163,7 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
   }, []);
 
   // state hook for debuging in development
-  useEffect(() => {
-    console.log("This is certificate Data: ", certificateData);
-  }, [certificateData]);
+  useEffect(() => {}, [certificateData]);
 
   // state hook to fetch the available certificates of the use
   useEffect(() => {
@@ -188,8 +185,6 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
             ...certificate,
           }))
         );
-
-        console.log("This is Data: ", data);
       } catch (err) {
         if (err instanceof Error) {
           console.log(err.message);
@@ -217,8 +212,8 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
         >
           <Avatar
             alt="Student Photo"
-            src={noUserImage}
-            sx={{ width: 150, height: 150 }}
+            src={student.image_url}
+            sx={{ width: 200, height: 200 }}
           />
         </Col>
         <Col md={8}>

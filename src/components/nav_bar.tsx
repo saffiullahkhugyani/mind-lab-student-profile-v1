@@ -5,7 +5,7 @@ import {
   Link,
   Outlet,
 } from "react-router-dom";
-import { Button, Container, Form, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 
 import logo from "../assets/mind_lab_app_icon.png";
 import AddStudent from "../pages/add_student";

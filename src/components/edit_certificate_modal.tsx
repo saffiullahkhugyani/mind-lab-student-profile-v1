@@ -39,6 +39,7 @@ const EditCertificateModal = ({
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+      setValidated(true);
     } else {
       event.preventDefault();
 
@@ -58,8 +59,6 @@ const EditCertificateModal = ({
         setValidated(false);
       }
     }
-
-    setValidated(true);
   };
 
   const handleClose = () => {
@@ -124,7 +123,6 @@ const EditCertificateModal = ({
               <option value="" disabled>
                 Please select an option
               </option>
-              <option value="Option 1">Option 1</option>
               {skillList &&
                 skillList.map((skill) => (
                   <option key={skill.id} value={skill.id}>

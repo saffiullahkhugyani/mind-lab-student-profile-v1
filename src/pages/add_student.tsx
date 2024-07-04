@@ -18,13 +18,15 @@ interface StudentRecord {
   country: string;
   state: string;
   city: string;
+  formPhoto: string;
 }
 
 const AddStudent = () => {
   const [validated, setValidated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [onSubmit, setOnsubmit] = useState(false);
+  const [onSubmit, setOnSubmit] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const {
     countries,
     states,
@@ -51,6 +53,7 @@ const AddStudent = () => {
     country: "",
     state: "",
     city: "",
+    formPhoto: "",
   });
 
   // reference for the form
@@ -58,11 +61,17 @@ const AddStudent = () => {
 
   // handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      setSelectedImage(file);
+      console.log(URL.createObjectURL(file));
+    }
     const { id, value } = event.target as HTMLInputElement;
     setFormData((prevData) => ({
       ...prevData,
       [id]: value,
     }));
+    console.log(id);
   };
 
   // handle for country change
@@ -90,7 +99,7 @@ const AddStudent = () => {
       event.preventDefault();
       event.stopPropagation();
     } else {
-      setOnsubmit(true);
+      setOnSubmit(true);
       event.preventDefault();
       setFormData({
         ...formData,
@@ -115,11 +124,35 @@ const AddStudent = () => {
 
   useEffect(() => {
     if (onSubmit) {
-      insertStudentRecord(formData);
+      uploadStudentImage(formData);
 
       console.log(formData);
     }
   }, [onSubmit]);
+
+  const uploadStudentImage = async (studentData: StudentRecord) => {
+    if (!selectedImage) return;
+
+    setIsSubmitting(true);
+    const filePath = `public/${studentData.englishFirstName}-${studentData.englishLastName}/${selectedImage.name}`;
+    const { data, error } = await supabase.storage
+      .from("student-images")
+      .upload(filePath, selectedImage);
+
+    if (error) {
+      setIsSubmitting(false);
+      setOnSubmit(false);
+      console.error("Error uploading image: ", error);
+    } else {
+      console.log(data);
+      const { publicUrl } = supabase.storage
+        .from("student-images")
+        .getPublicUrl(filePath).data;
+      if (publicUrl) {
+        insertStudentRecord({ ...formData, formPhoto: publicUrl });
+      }
+    }
+  };
 
   const insertStudentRecord = async (studentData: StudentRecord) => {
     setIsSubmitting(true);
@@ -139,6 +172,7 @@ const AddStudent = () => {
           state: studentData.state,
           city: studentData.city,
           street_address: studentData.streetAddress,
+          image_url: studentData.formPhoto,
         })
         .select();
 
@@ -160,7 +194,7 @@ const AddStudent = () => {
         console.error(String(err));
       }
     } finally {
-      setOnsubmit(false);
+      setOnSubmit(false);
       setIsSubmitting(false);
     }
   };
@@ -380,7 +414,7 @@ const AddStudent = () => {
 
         <Form.Group className="mb-3" controlId="formPhoto">
           <Form.Label>Photo</Form.Label>
-          <Form.Control required type="file" />
+          <Form.Control required type="file" onChange={handleInputChange} />
           <Form.Control.Feedback type="invalid">
             Please upload a photo.
           </Form.Control.Feedback>
