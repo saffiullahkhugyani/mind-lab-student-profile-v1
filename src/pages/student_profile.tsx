@@ -5,6 +5,8 @@ import EditCertificateModal from "../components/edit_certificate_modal";
 import noUserImage from "../assets/no-profile-picture-icon.png";
 import CustomPieChart from "../components/pie_chart";
 import { supabase } from "../services/supabase_client";
+import BackDrop from "../components/back_drop";
+import CustomizedSnackbars from "../components/snack_bar";
 
 // interfac for inserting student record into database
 interface StudentRecord {
@@ -79,6 +81,8 @@ const data = [
 const StudentProfile = ({ student }: StudentProfileProps) => {
   // state hooks to manage different states
   const [showModal, setShowModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const [skillList, setSkillList] = useState<SkillsList[]>([]);
   const [certificateData, setCertificateData] = useState<CertificateModel[]>(
     []
@@ -98,10 +102,44 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
   };
 
   // this will be used for inserting certificates into database
-  const handleSaveChanges = (data: any) => {
+  const handleSaveChanges = (data: CertificateModel) => {
     setCertificateData((prevData) => [...prevData, data]);
+    console.log("data from Modal", data);
 
-    handleCloseModal();
+    insertCertificateData(data);
+  };
+
+  const insertCertificateData = async (certificateData: CertificateModel) => {
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase
+        .from("certificate_master")
+        .insert({
+          student_id: student.id,
+          skill_id: certificateData.skill,
+          issue_authority: certificateData.issueAuthority,
+          issue_year: certificateData.issueYear,
+          date_added: certificateData.dateAdded,
+          number_of_hours: certificateData.numberOfHours,
+        })
+        .select();
+
+      if (error) {
+        throw error;
+      }
+      if (data) {
+        setShowSnackbar(true);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error(String(err));
+      }
+    } finally {
+      handleCloseModal();
+      setIsSubmitting(false);
+    }
   };
 
   // state hook to fetch available skill list
@@ -113,9 +151,7 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
         if (error) {
           throw error;
         }
-
         setSkillList(data.map((skill) => ({ ...skill })));
-        console.log(data);
       } catch (err) {
         if (err instanceof Error) {
           console.log(err.message);
@@ -163,7 +199,7 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
       }
     };
     getCertificates();
-  }, [student]);
+  }, [student, showSnackbar]);
 
   return (
     <Container className="border p-3 my-3">
@@ -321,6 +357,19 @@ const StudentProfile = ({ student }: StudentProfileProps) => {
         onHide={handleCloseModal}
         onSave={handleSaveChanges}
         skillList={skillList}
+      />
+      <BackDrop
+        toggle={isSubmitting}
+        handleClose={() => {
+          console.log("Handling close for Back drop");
+        }}
+      />
+      <CustomizedSnackbars
+        show={showSnackbar}
+        onClose={() => {
+          setShowSnackbar(false);
+        }}
+        message={`Certificate for ${student.english_first_name} ${student.english_last_name} added successfully!`}
       />
     </Container>
   );

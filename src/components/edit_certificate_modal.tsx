@@ -8,10 +8,20 @@ interface SKillsProp {
   skill_category: string;
 }
 
+interface CertificateProps {
+  dateAdded: string;
+  issueAuthority: string;
+  issueYear: string;
+  numberOfHours: string;
+  skill: string;
+  skillCategory: string;
+  skillLevel: string;
+}
+
 interface EditCertificateModalProps {
   show: boolean;
   onHide: () => void;
-  onSave: (data: any) => void;
+  onSave: (data: CertificateProps) => void;
   skillList: SKillsProp[];
 }
 
@@ -34,8 +44,18 @@ const EditCertificateModal = ({
 
       if (formRef.current) {
         const formData = new FormData(formRef.current);
-        const data = Object.fromEntries(formData.entries());
+        // const data = Object.fromEntries(formData.entries());
+        const data: CertificateProps = {
+          dateAdded: formData.get("dateAdded") as string,
+          issueAuthority: formData.get("issueAuthority") as string,
+          issueYear: formData.get("issueYear") as string,
+          numberOfHours: formData.get("numberOfHours") as string,
+          skill: formData.get("skill") as string,
+          skillCategory: formData.get("skillCategory") as string,
+          skillLevel: formData.get("skillLevel") as string,
+        };
         onSave(data);
+        setValidated(false);
       }
     }
 
@@ -90,9 +110,9 @@ const EditCertificateModal = ({
               <option value="" disabled>
                 Please select an option
               </option>
-              <option value="Option 1">Soft Skill</option>
-              <option value="Option 2">Hard Skill</option>
-              <option value="Option 3">Programing</option>
+              <option value="Soft Skill">Soft Skill</option>
+              <option value="Hard Skill">Hard Skill</option>
+              <option value="Programing">Programing</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               Please select a valid Skill Category.
@@ -122,7 +142,7 @@ const EditCertificateModal = ({
               <option value="" disabled>
                 Please select an option
               </option>
-              <option value="intermediate">intermediate</option>
+              <option value="Intermediate">Intermediate</option>
               <option value="Advance">Advance</option>
               <option value="Expert">Expert</option>
             </Form.Select>
