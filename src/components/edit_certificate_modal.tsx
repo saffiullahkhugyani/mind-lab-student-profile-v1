@@ -1,16 +1,25 @@
 import { Form, Modal, Button } from "react-bootstrap";
 import React, { useRef, useState } from "react";
 
+interface SKillsProp {
+  id: string;
+  arabic_skill_name: string;
+  english_skill_name: string;
+  skill_category: string;
+}
+
 interface EditCertificateModalProps {
   show: boolean;
   onHide: () => void;
   onSave: (data: any) => void;
+  skillList: SKillsProp[];
 }
 
 const EditCertificateModal = ({
   show,
   onHide,
   onSave,
+  skillList,
 }: EditCertificateModalProps) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [validated, setValidated] = useState(false);
@@ -81,12 +90,9 @@ const EditCertificateModal = ({
               <option value="" disabled>
                 Please select an option
               </option>
-              <option value="Option 1">Option 1</option>
-              <option value="Option 2">Option 2</option>
-              <option value="Option 3">Option 3</option>
-              <option value="Option 4">Option 4</option>
-              <option value="Option 5">Option 5</option>
-              <option value="Option 6">Option 6</option>
+              <option value="Option 1">Soft Skill</option>
+              <option value="Option 2">Hard Skill</option>
+              <option value="Option 3">Programing</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               Please select a valid Skill Category.
@@ -99,11 +105,12 @@ const EditCertificateModal = ({
                 Please select an option
               </option>
               <option value="Option 1">Option 1</option>
-              <option value="Option 2">Option 2</option>
-              <option value="Option 3">Option 3</option>
-              <option value="Option 4">Option 4</option>
-              <option value="Option 5">Option 5</option>
-              <option value="Option 6">Option 6</option>
+              {skillList &&
+                skillList.map((skill) => (
+                  <option key={skill.id} value={skill.id}>
+                    {skill.english_skill_name}
+                  </option>
+                ))}
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               Please select a valid skill.
@@ -115,12 +122,9 @@ const EditCertificateModal = ({
               <option value="" disabled>
                 Please select an option
               </option>
-              <option value="Option 1">Option 1</option>
-              <option value="Option 2">Option 2</option>
-              <option value="Option 3">Option 3</option>
-              <option value="Option 4">Option 4</option>
-              <option value="Option 5">Option 5</option>
-              <option value="Option 6">Option 6</option>
+              <option value="intermediate">intermediate</option>
+              <option value="Advance">Advance</option>
+              <option value="Expert">Expert</option>
             </Form.Select>
             <Form.Control.Feedback type="invalid">
               Please select a valid skill level.

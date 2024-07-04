@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import useLocationData from "../hooks/useLocationData";
 import { supabase } from "../services/supabase_client";
 import BackDrop from "../components/back_drop";
+import CustomizedSnackbars from "../components/snack_bar";
 
 interface StudentRecord {
   arabicFirstName: string;
@@ -22,6 +23,8 @@ interface StudentRecord {
 const AddStudent = () => {
   const [validated, setValidated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [onSubmit, setOnsubmit] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
   const {
     countries,
     states,
@@ -49,6 +52,9 @@ const AddStudent = () => {
     state: "",
     city: "",
   });
+
+  // reference for the form
+  const formRef = useRef<HTMLFormElement>(null);
 
   // handle input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,13 +85,13 @@ const AddStudent = () => {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true);
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      setIsSubmitting(false);
       event.preventDefault();
       event.stopPropagation();
     } else {
+      setOnsubmit(true);
+      setIsSubmitting(false);
       event.preventDefault();
       setFormData({
         ...formData,
@@ -93,16 +99,6 @@ const AddStudent = () => {
         state: selectedState,
         city: selectedCity,
       });
-      setTimeout(() => {
-        setIsSubmitting(false);
-        console.log(formData);
-      }, 1000);
-      // console.log({
-      //   ...formData,
-      //   country: selectedCountry,
-      //   state: selectedState,
-      //   city: selectedCity,
-      // });
     }
 
     setValidated(true);
@@ -118,39 +114,66 @@ const AddStudent = () => {
     event.target.removeAttribute("lang");
   };
 
-  // useEffect(() => {
-  //   insertStudentRecord(formData);
-  // }, [handleSubmit]);
+  useEffect(() => {
+    if (onSubmit) {
+      insertStudentRecord(formData);
 
-  // const insertStudentRecord = async (studentData: StudentRecord) => {
-  //   console.log(studentData);
-  //   const { data, error } = await supabase
-  //     .from("student_record")
-  //     .insert({
-  //       arabic_first_name: studentData.arabicFirstName,
-  //       arabic_last_name: studentData.arabicLastName,
-  //       english_first_name: studentData.englishFirstName,
-  //       english_last_name: studentData.englishLastName,
-  //       father_name: studentData.fatherName,
-  //       date_ofbirth: studentData.dateOfBirth,
-  //       email: studentData.email,
-  //       contact: studentData.contact,
-  //       country: studentData.country,
-  //       state: studentData.state,
-  //       city: studentData.city,
-  //       street_address: studentData.streetAddress,
-  //     })
-  //     .select();
+      console.log(formData);
+    }
+  }, [onSubmit]);
 
-  //   if (error) {
-  //     console.log("Error inserting data", error);
-  //   }
-  //   console.log(data);
-  // };
+  const insertStudentRecord = async (studentData: StudentRecord) => {
+    setIsSubmitting(true);
+    try {
+      const { data, error } = await supabase
+        .from("student_record")
+        .insert({
+          arabic_first_name: studentData.arabicFirstName,
+          arabic_last_name: studentData.arabicLastName,
+          english_first_name: studentData.englishFirstName,
+          english_last_name: studentData.englishLastName,
+          father_name: studentData.fatherName,
+          date_of_birth: studentData.dateOfBirth,
+          email: studentData.email,
+          contact: studentData.contact,
+          country: studentData.country,
+          state: studentData.state,
+          city: studentData.city,
+          street_address: studentData.streetAddress,
+        })
+        .select();
+
+      if (error) {
+        throw error;
+      }
+
+      if (data) {
+        if (formRef.current) {
+          formRef.current.reset();
+        }
+        setShowSnackbar(true);
+        setValidated(false);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error(err.message);
+      } else {
+        console.error(String(err));
+      }
+    } finally {
+      setOnsubmit(false);
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="m-auto w-75 p-3">
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form
+        ref={formRef}
+        noValidate
+        validated={validated}
+        onSubmit={handleSubmit}
+      >
         <h3 className="mb-3 text-center">Add Student</h3>
         <Row>
           <Col md={6}>
@@ -368,6 +391,13 @@ const AddStudent = () => {
         </Button>
       </Form>
       <BackDrop toggle={isSubmitting} handleClose={() => {}} />
+      <CustomizedSnackbars
+        show={showSnackbar}
+        message="Student record added successfully!"
+        onClose={() => {
+          setShowSnackbar(false);
+        }}
+      />
     </div>
   );
 };
