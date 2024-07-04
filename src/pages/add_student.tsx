@@ -91,7 +91,6 @@ const AddStudent = () => {
       event.stopPropagation();
     } else {
       setOnsubmit(true);
-      setIsSubmitting(false);
       event.preventDefault();
       setFormData({
         ...formData,
@@ -386,7 +385,7 @@ const AddStudent = () => {
             Please upload a photo.
           </Form.Control.Feedback>
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button variant="outline-primary" type="submit">
           Submit
         </Button>
       </Form>
