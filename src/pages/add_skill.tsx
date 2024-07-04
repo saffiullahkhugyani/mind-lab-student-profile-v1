@@ -1,11 +1,19 @@
 import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
+import BackDrop from "../components/back_drop";
+
+interface SkillData {
+  skillCategory: string;
+  arabicSkillName: string;
+  englishSkillName: string;
+}
 
 const AddSkill = () => {
   const [validated, setValidated] = useState(false);
   const [skillCategory, setSkillCategory] = useState("");
-  const [skillData, setSkillData] = useState({
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [skillData, setSkillData] = useState<SkillData>({
     skillCategory: "",
     arabicSkillName: "",
     englishSkillName: "",
@@ -29,17 +37,23 @@ const AddSkill = () => {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    setIsSubmitting(true);
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
+      setIsSubmitting(false);
       event.preventDefault();
       event.stopPropagation();
     } else {
       event.preventDefault();
-      console.log({
-        ...skillData,
-        skillCategory: skillCategory,
-      });
+      setTimeout(() => {
+        console.log({
+          ...skillData,
+          skillCategory: skillCategory,
+        });
+        setIsSubmitting(false);
+      }, 1000);
     }
+    console.log("outside else body");
 
     setValidated(true);
   };
@@ -58,7 +72,7 @@ const AddSkill = () => {
     <div className="m-auto w-75 p-3">
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <h3 className="mb-3 text-center">Add Skill</h3>
-        <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Form.Group className="mb-3" controlId="skillCategory">
           <Form.Label>Skill Category</Form.Label>
           <Form.Select
             required
@@ -69,12 +83,9 @@ const AddSkill = () => {
             <option value="" disabled>
               Please select an option
             </option>
-            <option value="Option 1">Option 1</option>
-            <option value="Option 2">Option 2</option>
-            <option value="Option 3">Option 3</option>
-            <option value="Option 4">Option 4</option>
-            <option value="Option 5">Option 5</option>
-            <option value="Option 6">Option 6</option>
+            <option value="Soft skill">Soft skill</option>
+            <option value="Hard skill">Hard skill</option>
+            <option value="Programing">Programing</option>
           </Form.Select>
           <Form.Control.Feedback type="invalid">
             Please select a skill category
@@ -114,6 +125,12 @@ const AddSkill = () => {
           </Button>
         </div>
       </Form>
+      <BackDrop
+        toggle={isSubmitting}
+        handleClose={() => {
+          console.log("Handle function to close back drop");
+        }}
+      />
     </div>
   );
 };

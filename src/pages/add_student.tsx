@@ -1,9 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import useLocationData from "../hooks/useLocationData";
+import { supabase } from "../services/supabase_client";
+import BackDrop from "../components/back_drop";
+
+interface StudentRecord {
+  arabicFirstName: string;
+  arabicLastName: string;
+  englishFirstName: string;
+  englishLastName: string;
+  dateOfBirth: string;
+  fatherName: string;
+  email: string;
+  contact: "";
+  streetAddress: string;
+  country: string;
+  state: string;
+  city: string;
+}
 
 const AddStudent = () => {
   const [validated, setValidated] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const {
     countries,
     states,
@@ -17,7 +35,7 @@ const AddStudent = () => {
     selectedCity,
     setSelectedCity,
   } = useLocationData();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<StudentRecord>({
     arabicFirstName: "",
     arabicLastName: "",
     englishFirstName: "",
@@ -27,6 +45,9 @@ const AddStudent = () => {
     email: "",
     contact: "",
     streetAddress: "",
+    country: "",
+    state: "",
+    city: "",
   });
 
   // handle input change
@@ -58,18 +79,30 @@ const AddStudent = () => {
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    setIsSubmitting(true);
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
+      setIsSubmitting(false);
       event.preventDefault();
       event.stopPropagation();
     } else {
       event.preventDefault();
-      console.log({
+      setFormData({
         ...formData,
         country: selectedCountry,
         state: selectedState,
         city: selectedCity,
       });
+      setTimeout(() => {
+        setIsSubmitting(false);
+        console.log(formData);
+      }, 1000);
+      // console.log({
+      //   ...formData,
+      //   country: selectedCountry,
+      //   state: selectedState,
+      //   city: selectedCity,
+      // });
     }
 
     setValidated(true);
@@ -84,6 +117,36 @@ const AddStudent = () => {
     event.target.removeAttribute("dir");
     event.target.removeAttribute("lang");
   };
+
+  // useEffect(() => {
+  //   insertStudentRecord(formData);
+  // }, [handleSubmit]);
+
+  // const insertStudentRecord = async (studentData: StudentRecord) => {
+  //   console.log(studentData);
+  //   const { data, error } = await supabase
+  //     .from("student_record")
+  //     .insert({
+  //       arabic_first_name: studentData.arabicFirstName,
+  //       arabic_last_name: studentData.arabicLastName,
+  //       english_first_name: studentData.englishFirstName,
+  //       english_last_name: studentData.englishLastName,
+  //       father_name: studentData.fatherName,
+  //       date_ofbirth: studentData.dateOfBirth,
+  //       email: studentData.email,
+  //       contact: studentData.contact,
+  //       country: studentData.country,
+  //       state: studentData.state,
+  //       city: studentData.city,
+  //       street_address: studentData.streetAddress,
+  //     })
+  //     .select();
+
+  //   if (error) {
+  //     console.log("Error inserting data", error);
+  //   }
+  //   console.log(data);
+  // };
 
   return (
     <div className="m-auto w-75 p-3">
@@ -304,6 +367,7 @@ const AddStudent = () => {
           Submit
         </Button>
       </Form>
+      <BackDrop toggle={isSubmitting} handleClose={() => {}} />
     </div>
   );
 };
